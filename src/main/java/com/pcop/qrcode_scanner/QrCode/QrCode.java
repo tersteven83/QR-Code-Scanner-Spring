@@ -39,15 +39,18 @@ public class QrCode {
     )
     private Etudiant qrcodeOwner;
 
+    private String path;
+
     public QrCode() {
     }
 
-    public QrCode(String data, LocalDateTime expireDate, LocalDateTime createdAt, boolean isValid, Etudiant qrcodeOwner) {
+    public QrCode(String data, LocalDateTime expireDate, LocalDateTime createdAt, boolean isValid, Etudiant qrcodeOwner, String path) {
         this.data = data;
         this.expireDate = expireDate;
         this.createdAt = createdAt;
         this.isValid = isValid;
         this.qrcodeOwner = qrcodeOwner;
+        this.path = path;
     }
 
     @Override
@@ -104,5 +107,13 @@ public class QrCode {
 
     public void setQrcodeOwner(Etudiant qrcodeOwner) {
         this.qrcodeOwner = qrcodeOwner;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 }
