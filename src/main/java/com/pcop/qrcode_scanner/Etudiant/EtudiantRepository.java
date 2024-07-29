@@ -11,4 +11,5 @@ public interface EtudiantRepository extends JpaRepository<Etudiant, Long> {
     Optional<Etudiant> findByCin(String cin);
     List<Etudiant> findAllBySexe(Gender gender);
     Optional<Etudiant> findByMatriculeOrCinOrEmail(String matricule, String cin, String email);
+    Optional<Etudiant> findByQrCodeData(String qrCode_data);
 }

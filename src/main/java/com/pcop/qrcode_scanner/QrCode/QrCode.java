@@ -32,25 +32,17 @@ public class QrCode {
     @Column(nullable = false)
     private boolean isValid;
 
-    @OneToOne(optional = false)
-    @JoinColumn(
-            name = "id_etudiant",
-            referencedColumnName = "id"
-    )
-    private Etudiant qrcodeOwner;
-
     private String path;
 
     public QrCode() {
     }
 
-    public QrCode(String data, LocalDateTime expireDate, LocalDateTime createdAt, boolean isValid, Etudiant qrcodeOwner, String path) {
+    public QrCode(String data, LocalDateTime expireDate, LocalDateTime createdAt, boolean isValid) {
         this.data = data;
         this.expireDate = expireDate;
         this.createdAt = createdAt;
         this.isValid = isValid;
-        this.qrcodeOwner = qrcodeOwner;
-        this.path = path;
+//        this.qrcodeOwner = qrcodeOwner;
     }
 
     @Override
@@ -61,7 +53,7 @@ public class QrCode {
                 ", expireDate=" + expireDate +
                 ", createdAt=" + createdAt +
                 ", isValid=" + isValid +
-                ", qrcodeOwner=" + qrcodeOwner +
+//                ", qrcodeOwner=" + qrcodeOwner +
                 '}';
     }
 
@@ -101,13 +93,6 @@ public class QrCode {
         isValid = valid;
     }
 
-    public Etudiant getQrcodeOwner() {
-        return qrcodeOwner;
-    }
-
-    public void setQrcodeOwner(Etudiant qrcodeOwner) {
-        this.qrcodeOwner = qrcodeOwner;
-    }
 
     public String getPath() {
         return path;

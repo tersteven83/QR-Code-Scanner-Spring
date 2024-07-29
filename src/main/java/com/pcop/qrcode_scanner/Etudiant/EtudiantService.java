@@ -44,4 +44,8 @@ public class EtudiantService {
         return etudiantRepository.findById(id);
     }
 
+    public Optional<Etudiant> findByQrCodeData(String data) {
+        return etudiantRepository.findByQrCodeData(data);
+    }
+
 }

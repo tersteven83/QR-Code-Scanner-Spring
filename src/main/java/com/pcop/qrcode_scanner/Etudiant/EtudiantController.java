@@ -1,17 +1,23 @@
 package com.pcop.qrcode_scanner.Etudiant;
 
 
+import com.google.zxing.WriterException;
 import com.pcop.qrcode_scanner.*;
 import com.pcop.qrcode_scanner.ExceptionHandler.ResourceAlreadyExistsException;
 import com.pcop.qrcode_scanner.ExceptionHandler.ResourceNotFoundException;
 import com.pcop.qrcode_scanner.ExceptionHandler.ResourceNotUpdatedException;
 import com.pcop.qrcode_scanner.Gender.GenderConverter;
+import com.pcop.qrcode_scanner.QrCode.QrCode;
+import com.pcop.qrcode_scanner.QrCode.QrCodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/etudiants")
@@ -19,6 +25,9 @@ public class EtudiantController {
 
     @Autowired
     EtudiantService etudiantService;
+
+    @Autowired
+    QrCodeService qrCodeService;
 
     @GetMapping
     public Iterable<Etudiant> getAllEtudiants() {
@@ -52,13 +61,22 @@ public class EtudiantController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public Etudiant create(@RequestBody Etudiant etudiant) {
+    public Etudiant create(@RequestBody Etudiant etudiant) throws IOException, WriterException {
 //        Verify if the etudiant exist in the database
         Optional<Etudiant> etudiantOptional = etudiantService.findByMatriculeOrCinOrEmail(etudiant.getMatricule(),
                 etudiant.getCin(), etudiant.getEmail());
         if (etudiantOptional.isPresent()) {
             throw new ResourceAlreadyExistsException("Etudiant already exists in the database");
         }
+
+//        create a QR Code for the student
+        QrCode qrCode = new QrCode(UUID.randomUUID().toString(),
+                LocalDateTime.now().plusMonths(10),
+                LocalDateTime.now(), true);
+        qrCodeService.save(qrCode);
+
+//        save the student to the DB
+        etudiant.setQrCode(qrCode);
         return etudiantService.save(etudiant);
     }
 
@@ -95,6 +113,15 @@ public class EtudiantController {
             throw new ResourceNotFoundException("Etudiant not found for matricule: " + im);
         }
         return ResponseEntity.ok(etudiant);
+    }
+
+    @GetMapping("/qcode/{data}")
+    public ResponseEntity<Optional<Etudiant>> getEtudiantByQrCodeData(@PathVariable String data) {
+        Optional<Etudiant> etudiant = etudiantService.findByQrCodeData(data);
+        if (etudiant.isEmpty()) {
+            throw new ResourceNotFoundException("Etudiant not found for that QR Code");
+        }
+        return ResponseEntity.ok().body(etudiant);
     }
 
 }

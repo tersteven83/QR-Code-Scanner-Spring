@@ -107,7 +107,8 @@ public class Etudiant {
     @Convert(converter = GenderConverter.class)
     private Gender sexe;
 
-    @OneToOne(mappedBy = "qrcodeOwner")
+    @OneToOne
+    @JoinColumn(name = "id_qcode")
     private QrCode qrCode;
 
     @OneToMany(mappedBy = "etudiant")
