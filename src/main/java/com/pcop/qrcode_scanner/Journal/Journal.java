@@ -39,14 +39,6 @@ public class Journal {
             referencedColumnName = "id"
     )
     private Operateur operateur;
-    
-    @ManyToOne(
-            optional = false,
-            cascade = CascadeType.ALL, 
-            fetch = FetchType.LAZY
-    )
-    @JoinColumn(name = "id_etudiant", referencedColumnName = "id")
-    private Etudiant etudiant;
 
     @Column(name = "operation_date")
     private LocalDateTime operationDate;
@@ -54,10 +46,9 @@ public class Journal {
     public Journal() {
     }
     
-    public Journal(String operation, Operateur operateur, Etudiant etudiant, LocalDateTime operationDate) {
+    public Journal(String operation, Operateur operateur, LocalDateTime operationDate) {
         this.operation = operation;
         this.operateur = operateur;
-        this.etudiant = etudiant;
         this.operationDate = operationDate;
     }
 
@@ -67,7 +58,6 @@ public class Journal {
                 "id=" + id +
                 ", operation='" + operation + '\'' +
                 ", operateur=" + operateur +
-                ", etudiant=" + etudiant +
                 ", operationDate=" + operationDate +
                 '}';
     }
@@ -90,14 +80,6 @@ public class Journal {
 
     public void setOperateur(Operateur operateur) {
         this.operateur = operateur;
-    }
-
-    public Etudiant getEtudiant() {
-        return etudiant;
-    }
-
-    public void setEtudiant(Etudiant etudiant) {
-        this.etudiant = etudiant;
     }
 
     public LocalDateTime getOperationDate() {

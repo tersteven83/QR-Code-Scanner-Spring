@@ -16,16 +16,12 @@ public class JournalService {
         return journalRepository.save(journal);
     }
 
-    public Journal findByOperationDate(LocalDateTime operationDate) {
-        return journalRepository.findByOperationDate(operationDate);
+    public Iterable<Journal> findAllByOperationDate(LocalDateTime operationDate) {
+        return journalRepository.findAllByOperationDate(operationDate);
     }
 
     public Iterable<Journal> findByOperateurId(Long id_operateur) {
         return journalRepository.findAllByOperateurId(id_operateur);
-    }
-
-    public Iterable<Journal> findAllByEtudiantMatricule(String matricule) {
-        return journalRepository.findAllByEtudiantMatricule(matricule);
     }
 
     public void deleteById(Long id) {
