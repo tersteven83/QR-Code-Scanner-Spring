@@ -111,9 +111,6 @@ public class Etudiant {
     @JoinColumn(name = "id_qcode")
     private QrCode qrCode;
 
-    @OneToMany(mappedBy = "etudiant")
-    private List<Journal> journals;
-
     public Etudiant(){}
 
     public Etudiant(String nom, String prenom, LocalDate dob, String cin, LocalDate cin_date, String email, String tel, String adresse, String parcours, String anneeUniv, Gender sexe, String matricule) {
@@ -147,8 +144,6 @@ public class Etudiant {
                 ", parcours='" + parcours + '\'' +
                 ", anneeUniv='" + anneeUniv + '\'' +
                 ", sexe=" + sexe +
-//                ", qrCode=" + qrCode +
-//                ", journals=" + journals +
                 '}';
     }
 
@@ -260,11 +255,4 @@ public class Etudiant {
         this.qrCode = qrCode;
     }
 
-    public List<Journal> getJournals() {
-        return journals;
-    }
-
-    public void setJournals(List<Journal> journals) {
-        this.journals = journals;
-    }
 }
