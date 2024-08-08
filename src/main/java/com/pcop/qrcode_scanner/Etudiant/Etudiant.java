@@ -4,6 +4,7 @@ package com.pcop.qrcode_scanner.Etudiant;
 import com.pcop.qrcode_scanner.Gender.Gender;
 import com.pcop.qrcode_scanner.Gender.GenderConverter;
 import com.pcop.qrcode_scanner.Journal.Journal;
+import com.pcop.qrcode_scanner.ProfilePicture.ProfilePicture;
 import com.pcop.qrcode_scanner.QrCode.QrCode;
 import jakarta.persistence.*;
 
@@ -110,6 +111,10 @@ public class Etudiant {
     @OneToOne
     @JoinColumn(name = "id_qcode")
     private QrCode qrCode;
+
+    @OneToOne
+    @JoinColumn(name = "id_pdp")
+    private ProfilePicture profilePicture;
 
     public Etudiant(){}
 
@@ -255,4 +260,11 @@ public class Etudiant {
         this.qrCode = qrCode;
     }
 
+    public ProfilePicture getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(ProfilePicture profilePicture) {
+        this.profilePicture = profilePicture;
+    }
 }
