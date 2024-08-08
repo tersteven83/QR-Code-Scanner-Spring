@@ -11,5 +11,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/static/qr_codes/**")
                 .addResourceLocations("file:./src/main/resources/static/qr_codes/");
+        registry.addResourceHandler("/static/uploads/**")
+                .addResourceLocations("file:./src/main/resources/static/uploads/");
     }
 }
