@@ -8,6 +8,7 @@ import com.pcop.qrcode_scanner.QrCode.QrCodeRepository;
 import com.pcop.qrcode_scanner.Role.Role;
 import com.pcop.qrcode_scanner.Role.RoleName;
 import com.pcop.qrcode_scanner.Role.RoleRepository;
+import com.pcop.qrcode_scanner.Storage.FileStorageService;
 import com.pcop.qrcode_scanner.User.User;
 import com.pcop.qrcode_scanner.User.UserRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -33,7 +34,8 @@ public class QrcodeScannerApplication {
 	CommandLineRunner commandLineRunner(UserRepository userRepository,
 										RoleRepository roleRepository,
 										EtudiantRepository etudiantRepository,
-										QrCodeRepository qrCodeRepository) {
+										QrCodeRepository qrCodeRepository,
+										FileStorageService fileStorageService) {
 		return args -> {
 			roleRepository.save(new Role(RoleName.ADMIN));
 			roleRepository.save(new Role(RoleName.USER));
@@ -61,6 +63,9 @@ public class QrcodeScannerApplication {
 
 			etudiantRepository.save(etudiant);
 			System.out.println("Saved etudiant with ID: " + etudiant.getId());
+
+			fileStorageService.deleteAll();
+			fileStorageService.init();
 
         };
 	}
