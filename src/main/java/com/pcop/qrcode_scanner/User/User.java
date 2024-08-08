@@ -32,6 +32,15 @@ public class User {
     )
     private List<Role> roles;
 
+    public User() {}
+
+    public User(boolean enabled, String password, List<Role> roles, String username) {
+        this.enabled = enabled;
+        this.password = password;
+        this.roles = roles;
+        this.username = username;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }

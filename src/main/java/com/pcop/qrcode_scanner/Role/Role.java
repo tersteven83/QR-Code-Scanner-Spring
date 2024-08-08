@@ -28,4 +28,9 @@ public class Role {
     public void setName(RoleName name) {
         this.name = name;
     }
+
+    public Role() {}
+    public Role(RoleName name) {
+        this.name = name;
+    }
 }
