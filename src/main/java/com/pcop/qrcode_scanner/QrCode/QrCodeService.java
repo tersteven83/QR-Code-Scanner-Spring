@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -48,8 +49,12 @@ public class QrCodeService {
             }
         }
 
-        String qrCodePath = "static/qr_codes/" + UUID.randomUUID() + ".png";
-        File qrCodeFile = new File("./src/main/resources/" + qrCodePath);
+        File qrCodeDirectory = new File("./src/main/resources/static/qr_codes/" + LocalDate.now());
+        if (!qrCodeDirectory.exists())
+            qrCodeDirectory.mkdirs();
+
+        String qrCodePath = "/static/qr_codes/" + LocalDate.now() + "/" + UUID.randomUUID() + ".png";
+        File qrCodeFile = new File("./src/main/resources" + qrCodePath);
         ImageIO.write(image, "PNG", qrCodeFile);
 
         return qrCodePath;
