@@ -30,13 +30,13 @@ public class EtudiantController {
     @Autowired
     QrCodeService qrCodeService;
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping
     public Iterable<Etudiant> getAllEtudiants() {
         return etudiantService.findAll();
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping("/{id}")
     public ResponseEntity<Optional<Etudiant>> getEtudiantById(@PathVariable Long id) {
         Optional<Etudiant> etudiant = etudiantService.findById(id);
@@ -46,7 +46,7 @@ public class EtudiantController {
         return ResponseEntity.ok().body(etudiant);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping("/cin/{cin}")
     public ResponseEntity<Optional<Etudiant>> getEtudiantByCin(@PathVariable String cin) {
         Optional<Etudiant> etudiant = etudiantService.findByCin(cin);
@@ -56,7 +56,7 @@ public class EtudiantController {
         return ResponseEntity.ok(etudiant);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping("/sexe/{sexe}")
     public Iterable<Etudiant> getAllEtudiantsBySexe(@PathVariable Character sexe) {
 //        Change the char parameter to upperCas
@@ -114,7 +114,7 @@ public class EtudiantController {
         etudiantService.deleteById(id);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping("/matricule/{im}")
     public ResponseEntity<Optional<Etudiant>> getEtudiantByMatricule(@PathVariable String im){
         Optional<Etudiant> etudiant = etudiantService.findByMatricule(im);
