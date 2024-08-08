@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 public interface JournalRepository extends JpaRepository<Journal, Long> {
     Journal findByOperationDate(LocalDateTime operationDate);
-    Iterable<Journal> findAllByOperateurId(Long Id_operateur);
+    Iterable<Journal> findAllByUserId(Long userId);
 
     Iterable<Journal> findAllByOperationDate(LocalDateTime operationDate);
 }

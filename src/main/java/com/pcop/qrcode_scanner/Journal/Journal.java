@@ -1,8 +1,7 @@
 package com.pcop.qrcode_scanner.Journal;
 
 
-import com.pcop.qrcode_scanner.Etudiant.Etudiant;
-import com.pcop.qrcode_scanner.Operateur.Operateur;
+import com.pcop.qrcode_scanner.User.User;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -35,10 +34,10 @@ public class Journal {
             fetch = FetchType.LAZY
     )
     @JoinColumn(
-            name = "id_operateur", 
+            name = "id_user",
             referencedColumnName = "id"
     )
-    private Operateur operateur;
+    private User user;
 
     @Column(name = "operation_date")
     private LocalDateTime operationDate;
@@ -46,9 +45,9 @@ public class Journal {
     public Journal() {
     }
     
-    public Journal(String operation, Operateur operateur, LocalDateTime operationDate) {
+    public Journal(String operation, User user, LocalDateTime operationDate) {
         this.operation = operation;
-        this.operateur = operateur;
+        this.user = user;
         this.operationDate = operationDate;
     }
 
@@ -57,7 +56,7 @@ public class Journal {
         return "Journal{" +
                 "id=" + id +
                 ", operation='" + operation + '\'' +
-                ", operateur=" + operateur +
+                ", user=" + user +
                 ", operationDate=" + operationDate +
                 '}';
     }
@@ -74,12 +73,12 @@ public class Journal {
         this.operation = operation;
     }
 
-    public Operateur getOperateur() {
-        return operateur;
+    public User getUser() {
+        return user;
     }
 
-    public void setOperateur(Operateur operateur) {
-        this.operateur = operateur;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public LocalDateTime getOperationDate() {

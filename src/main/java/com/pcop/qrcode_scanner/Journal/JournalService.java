@@ -20,8 +20,8 @@ public class JournalService {
         return journalRepository.findAllByOperationDate(operationDate);
     }
 
-    public Iterable<Journal> findByOperateurId(Long id_operateur) {
-        return journalRepository.findAllByOperateurId(id_operateur);
+    public Iterable<Journal> findByUserId(Long userId) {
+        return journalRepository.findAllByUserId(userId);
     }
 
     public void deleteById(Long id) {
