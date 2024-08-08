@@ -12,6 +12,7 @@ import com.pcop.qrcode_scanner.QrCode.QrCodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -29,11 +30,13 @@ public class EtudiantController {
     @Autowired
     QrCodeService qrCodeService;
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping
     public Iterable<Etudiant> getAllEtudiants() {
         return etudiantService.findAll();
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<Optional<Etudiant>> getEtudiantById(@PathVariable Long id) {
         Optional<Etudiant> etudiant = etudiantService.findById(id);
@@ -43,6 +46,7 @@ public class EtudiantController {
         return ResponseEntity.ok().body(etudiant);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping("/cin/{cin}")
     public ResponseEntity<Optional<Etudiant>> getEtudiantByCin(@PathVariable String cin) {
         Optional<Etudiant> etudiant = etudiantService.findByCin(cin);
@@ -52,6 +56,7 @@ public class EtudiantController {
         return ResponseEntity.ok(etudiant);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping("/sexe/{sexe}")
     public Iterable<Etudiant> getAllEtudiantsBySexe(@PathVariable Character sexe) {
 //        Change the char parameter to upperCas
@@ -59,6 +64,7 @@ public class EtudiantController {
         return etudiantService.findAllBySexe(new GenderConverter().convertToEntityAttribute(sexeToUpCase.charAt(0)));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public Etudiant create(@RequestBody Etudiant etudiant) throws IOException, WriterException {
@@ -81,6 +87,7 @@ public class EtudiantController {
     }
 
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PutMapping
     public ResponseEntity<Etudiant> update(@RequestBody Etudiant updatedEtudiant) {
 //        Verify if the etudiant exists
@@ -97,6 +104,7 @@ public class EtudiantController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
 //        Verify if the etudiant exists
@@ -106,6 +114,7 @@ public class EtudiantController {
         etudiantService.deleteById(id);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping("/matricule/{im}")
     public ResponseEntity<Optional<Etudiant>> getEtudiantByMatricule(@PathVariable String im){
         Optional<Etudiant> etudiant = etudiantService.findByMatricule(im);
