@@ -20,4 +20,12 @@ public class UserMapper {
         return userPrincipal;
     }
 
+    public static UserDTO entityToDTO(User user) {
+        UserDTO userDTO = new UserDTO();
+        userDTO.setUsername(user.getUsername());
+        userDTO.setEnabled(user.isEnabled());
+        userDTO.setRoles(user.getRoles());
+        return userDTO;
+    }
+
 }
