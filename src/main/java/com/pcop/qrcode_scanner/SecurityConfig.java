@@ -3,7 +3,6 @@ package com.pcop.qrcode_scanner;
 import com.pcop.qrcode_scanner.Jwt.JwtAuthenticationFilter;
 import com.pcop.qrcode_scanner.User.UserDetailsServiceImpl;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -64,6 +63,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/auth/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/etudiants/qcode/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/static/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exceptions -> exceptions
