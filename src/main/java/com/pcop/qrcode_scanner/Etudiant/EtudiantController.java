@@ -1,21 +1,29 @@
 package com.pcop.qrcode_scanner.Etudiant;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.zxing.WriterException;
 import com.pcop.qrcode_scanner.*;
 import com.pcop.qrcode_scanner.ExceptionHandler.ResourceAlreadyExistsException;
 import com.pcop.qrcode_scanner.ExceptionHandler.ResourceNotFoundException;
 import com.pcop.qrcode_scanner.ExceptionHandler.ResourceNotUpdatedException;
 import com.pcop.qrcode_scanner.Gender.GenderConverter;
+import com.pcop.qrcode_scanner.ProfilePicture.ProfilePicture;
+import com.pcop.qrcode_scanner.ProfilePicture.ProfilePictureService;
 import com.pcop.qrcode_scanner.QrCode.QrCode;
 import com.pcop.qrcode_scanner.QrCode.QrCodeService;
+import com.pcop.qrcode_scanner.Storage.FileInfo;
+import com.pcop.qrcode_scanner.Storage.FileStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -29,6 +37,13 @@ public class EtudiantController {
 
     @Autowired
     QrCodeService qrCodeService;
+
+    @Autowired
+    ProfilePictureService profilePictureService;
+
+    @Autowired
+    FileStorageService fileStorageService;
+
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping
@@ -67,13 +82,23 @@ public class EtudiantController {
     @PreAuthorize("hasAnyRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public Etudiant create(@RequestBody Etudiant etudiant) throws IOException, WriterException {
-//        Verify if the etudiant exist in the database
+    public Etudiant create(@RequestParam("image") MultipartFile image,
+                           @RequestParam("etudiant") String etudiantJson) throws IOException, WriterException {
+        // Create ObjectMapper and register JavaTimeModule
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+
+        // Convert JSON string to Etudiant object
+        Etudiant etudiant = objectMapper.readValue(etudiantJson, Etudiant.class);
+
+        //Verify if the etudiant exist in the database
         Optional<Etudiant> etudiantOptional = etudiantService.findByMatriculeOrCinOrEmail(etudiant.getMatricule(),
                 etudiant.getCin(), etudiant.getEmail());
         if (etudiantOptional.isPresent()) {
             throw new ResourceAlreadyExistsException("Etudiant already exists in the database");
         }
+
+        saveProfilePicture(image, etudiant);
 
 //        create a QR Code for the student
         QrCode qrCode = new QrCode(UUID.randomUUID().toString(),
@@ -88,11 +113,11 @@ public class EtudiantController {
 
 
     @PreAuthorize("hasAnyRole('ADMIN')")
-    @PutMapping
-    public ResponseEntity<Etudiant> update(@RequestBody Etudiant updatedEtudiant) {
+    @PutMapping("/{id}")
+    public ResponseEntity<Etudiant> update(@PathVariable Long id, @RequestBody Etudiant updatedEtudiant) {
 //        Verify if the etudiant exists
-        Etudiant etudiant = etudiantService.findById(updatedEtudiant.getId()).orElseThrow(
-                () -> new ResourceNotFoundException("Etudiant not found for id: " + updatedEtudiant.getId())
+        Etudiant etudiant = etudiantService.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Etudiant not found for id: " + id)
         );
 //        Verify if the etudiant is updated
         boolean isUpdated = GenericUpdater.updateIfChanged(etudiant, updatedEtudiant);
@@ -104,14 +129,64 @@ public class EtudiantController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @PutMapping("/{id}/pdp")
+    public ResponseEntity<Etudiant> updateProfilePicture(@PathVariable Long id, @RequestParam("image")MultipartFile image) {
+//        Verify if the etudiant exists
+        Etudiant etudiant = etudiantService.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Etudiant not found for id: " + id)
+        );
+//        empty the profile picture of the student and save the new one to it
+        etudiant.setProfilePicture(null);
+        saveProfilePicture(image, etudiant);
+
+        etudiantService.save(etudiant);
+        return ResponseEntity.ok().body(etudiant);
+    }
+
+    private void saveProfilePicture(@RequestParam("image") MultipartFile image, Etudiant etudiant) {
+        try {
+            FileInfo fileInfo = fileStorageService.save(image);
+            ProfilePicture profilePicture = new ProfilePicture(
+                    fileInfo.getName(),
+                    fileInfo.getPath(),
+                    fileInfo.getType(),
+                    LocalDateTime.now()
+            );
+            profilePictureService.save(profilePicture);
+            etudiant.setProfilePicture(profilePicture);
+        } catch (Exception e) {
+            throw new RuntimeException("Error while saving the image: " + e.getMessage());
+        }
+    }
+
     @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
 //        Verify if the etudiant exists
-        etudiantService.findById(id).orElseThrow(
+        Etudiant etudiant = etudiantService.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Etudiant not found for id: " + id)
         );
+//        delete the profile picture
+        ProfilePicture etudiantPdp = etudiant.getProfilePicture();
+        if (etudiantPdp!= null) fileStorageService.delete(etudiantPdp.getName());
+
         etudiantService.deleteById(id);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @DeleteMapping("/{id}/pdp")
+    public ResponseEntity<Etudiant> deleteProfilePicture(@PathVariable Long id) {
+        Etudiant etudiant = etudiantService.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Etudiant not found for id: " + id)
+        );
+        ProfilePicture etudiantPdp = etudiant.getProfilePicture();
+        if (etudiantPdp!= null) {
+            fileStorageService.delete(etudiantPdp.getName());
+        }
+        etudiant.setProfilePicture(null);
+        etudiantService.save(etudiant);
+        return ResponseEntity.ok().body(etudiant);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
