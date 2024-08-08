@@ -1,6 +1,6 @@
 package com.pcop.qrcode_scanner.User;
 
-import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.List;
 
