@@ -5,9 +5,11 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.SignatureException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
+@Component
 public class JwtProvider {
 
     @Value("${app.jwtSecret}")
@@ -25,7 +27,7 @@ public class JwtProvider {
                 .setSubject(userPrincipal.getUsername())
                .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
-                .signWith(io.jsonwebtoken.SignatureAlgorithm.HS512, jwtSecret)
+                .signWith(SignatureAlgorithm.HS256, jwtSecret)
                 .compact();
 
     }
