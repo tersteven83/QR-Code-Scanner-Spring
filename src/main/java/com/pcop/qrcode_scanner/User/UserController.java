@@ -70,13 +70,7 @@ public class UserController {
             throw new ResourceAlreadyExistsException("User already exists for username: " + user.getUsername());
         }
 
-        List<Role> userRole = new ArrayList<>();
-        for (Role roleName : user.getRoles()) {
-            Role role = roleService.findByName(roleName.getName()).orElseThrow(
-                    () -> new ResourceNotFoundException("Role not found for name: " + roleName.getName()));
-            userRole.add(role);
-        }
-        user.setRoles(userRole);
+        handleUserRole(user);
         //        encrypt the password in bcrypt
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
@@ -93,11 +87,24 @@ public class UserController {
 //        verify if the user is updated
         boolean isUpdated = GenericUpdater.updateIfChanged(user, updatedUser);
         if (isUpdated) {
+            handleUserRole(user);
+            BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+            user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
             User userSaved = userService.save(user);
             return ResponseEntity.ok(UserMapper.entityToDTO(userSaved));
         } else {
             throw new ResourceNotUpdatedException("User not updated for id: " + id);
         }
+    }
+
+    private void handleUserRole(User user) {
+        List<Role> userRole = new ArrayList<>();
+        for (Role roleName : user.getRoles()) {
+            Role role = roleService.findByName(roleName.getName()).orElseThrow(
+                    () -> new ResourceNotFoundException("Role not found for name: " + roleName.getName()));
+            userRole.add(role);
+        }
+        user.setRoles(userRole);
     }
 
 }
