@@ -33,7 +33,9 @@ public class User {
     )
     private List<Role> roles;
 
-    public User() {}
+    public User() {
+        enabled = true;
+    }
 
     public User(boolean enabled, String password, List<Role> roles, String username) {
         this.enabled = enabled;
