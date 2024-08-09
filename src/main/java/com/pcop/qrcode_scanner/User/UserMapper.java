@@ -1,8 +1,10 @@
 package com.pcop.qrcode_scanner.User;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;
+import java.util.Optional;
 
 
 public class UserMapper {
@@ -18,6 +20,12 @@ public class UserMapper {
         userPrincipal.setEnabled(user.isEnabled());
         userPrincipal.setAuthorities(authorities);
         return userPrincipal;
+    }
+
+    public static User principalToUser(UserPrincipal userPrincipal, UserService userService) {
+        return userService.findByUsername(userPrincipal.getUsername()).orElseThrow(
+                () -> new RuntimeException("User not found for username: " + userPrincipal.getUsername())
+        );
     }
 
     public static UserDTO entityToDTO(User user) {
