@@ -12,12 +12,16 @@ import org.springframework.stereotype.Service;
 public class UserDetailsServiceImpl implements UserDetailsService {
     
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
     
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username)
+        User user = userService.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+//        verify if the user is enabled
+        if (!user.isEnabled()) {
+            throw new UsernameNotFoundException("User account is disabled: " + username);
+        }
         return UserMapper.userToPrincipal(user);
     }
 }
