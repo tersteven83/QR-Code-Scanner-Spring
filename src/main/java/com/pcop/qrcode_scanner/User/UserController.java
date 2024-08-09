@@ -5,11 +5,18 @@ import com.pcop.qrcode_scanner.ExceptionHandler.ResourceAlreadyExistsException;
 import com.pcop.qrcode_scanner.ExceptionHandler.ResourceNotFoundException;
 import com.pcop.qrcode_scanner.ExceptionHandler.ResourceNotUpdatedException;
 import com.pcop.qrcode_scanner.GenericUpdater;
+import com.pcop.qrcode_scanner.Role.Role;
+import com.pcop.qrcode_scanner.Role.RoleName;
+import com.pcop.qrcode_scanner.Role.RoleService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -17,6 +24,9 @@ public class UserController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    RoleService roleService;
 
 //    get all users
 
@@ -60,6 +70,13 @@ public class UserController {
             throw new ResourceAlreadyExistsException("User already exists for username: " + user.getUsername());
         }
 
+        List<Role> userRole = new ArrayList<>();
+        for (Role roleName : user.getRoles()) {
+            Role role = roleService.findByName(roleName.getName()).orElseThrow(
+                    () -> new ResourceNotFoundException("Role not found for name: " + roleName.getName()));
+            userRole.add(role);
+        }
+        user.setRoles(userRole);
         //        encrypt the password in bcrypt
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
