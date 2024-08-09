@@ -9,15 +9,16 @@ import java.time.LocalDateTime;
 public class ProfilePicture {
 
     @Id
-    @SequenceGenerator(
-            name = "profile_picture_id_seq",
-            sequenceName = "profile_picture_id_seq",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "profile_picture_id_seq"
-    )
+//    @SequenceGenerator(
+//            name = "profile_picture_id_seq",
+//            sequenceName = "profile_picture_id_seq",
+//            allocationSize = 1
+//    )
+//    @GeneratedValue(
+//            strategy = GenerationType.IDENTITY
+//            generator = "profile_picture_id_seq"
+//    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, updatable = false)
     private Long id;
 

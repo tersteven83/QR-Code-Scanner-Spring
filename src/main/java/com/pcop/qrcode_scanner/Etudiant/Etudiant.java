@@ -23,15 +23,16 @@ import java.util.List;
 public class Etudiant {
 
     @Id
-    @SequenceGenerator(
-            name = "etudiant_id_seq",
-            sequenceName = "etudiant_id_seq",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "etudiant_id_seq"
-    )
+//    @SequenceGenerator(
+//            name = "etudiant_id_seq",
+//            sequenceName = "etudiant_id_seq",
+//            allocationSize = 1
+//    )
+//    @GeneratedValue(
+//            strategy = GenerationType.SEQUENCE,
+//            generator = "etudiant_id_seq"
+//    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(
             name = "id",
             nullable = false,

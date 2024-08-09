@@ -9,15 +9,16 @@ import java.time.LocalDateTime;
 @Entity
 public class Journal {
     @Id
-    @SequenceGenerator(
-            name = "journal_id_seq",
-            sequenceName = "journal_id_seq",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "journal_id_seq"
-    )
+//    @SequenceGenerator(
+//            name = "journal_id_seq",
+//            sequenceName = "journal_id_seq",
+//            allocationSize = 1
+//    )
+//    @GeneratedValue(
+//            strategy = GenerationType.SEQUENCE
+////            generator = "journal_id_seq"
+//    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, updatable = false)
     private Long id;
 

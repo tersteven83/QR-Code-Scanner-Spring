@@ -8,15 +8,16 @@ import java.time.LocalDateTime;
 @Entity
 public class QrCode {
     @Id
-    @SequenceGenerator(
-            name = "qrcode_id_seq",
-            sequenceName = "qrcode_id_seq",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "qrcode_id_seq"
-    )
+//    @SequenceGenerator(
+//            name = "qrcode_id_seq",
+//            sequenceName = "qrcode_id_seq",
+//            allocationSize = 1
+//    )
+//    @GeneratedValue(
+//            strategy = GenerationType.SEQUENCE,
+//            generator = "qrcode_id_seq"
+//    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, updatable = false)
     private Long id;
 
