@@ -27,4 +27,7 @@ public class RoleService {
         return roleRepository.findAll();
     }
 
+    public Optional<Role> findByName(RoleName roleName) {
+        return roleRepository.findByName(roleName);
+    }
 }
