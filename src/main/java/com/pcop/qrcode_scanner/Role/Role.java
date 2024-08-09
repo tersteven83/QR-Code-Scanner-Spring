@@ -13,6 +13,10 @@ public class Role {
     @Enumerated(EnumType.STRING)
     private RoleName name;
 
+    public Role(String role) {
+        this.name = RoleName.valueOf(role);
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
