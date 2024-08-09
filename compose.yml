@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   app:
-    image: qrscanner
+    image: steevi83/qrscanner
     build:
       context: .
       dockerfile: Dockerfile
