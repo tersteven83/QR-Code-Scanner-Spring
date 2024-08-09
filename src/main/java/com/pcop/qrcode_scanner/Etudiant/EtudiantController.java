@@ -9,21 +9,29 @@ import com.pcop.qrcode_scanner.ExceptionHandler.ResourceAlreadyExistsException;
 import com.pcop.qrcode_scanner.ExceptionHandler.ResourceNotFoundException;
 import com.pcop.qrcode_scanner.ExceptionHandler.ResourceNotUpdatedException;
 import com.pcop.qrcode_scanner.Gender.GenderConverter;
+import com.pcop.qrcode_scanner.Journal.Journal;
+import com.pcop.qrcode_scanner.Journal.JournalService;
 import com.pcop.qrcode_scanner.ProfilePicture.ProfilePicture;
 import com.pcop.qrcode_scanner.ProfilePicture.ProfilePictureService;
 import com.pcop.qrcode_scanner.QrCode.QrCode;
 import com.pcop.qrcode_scanner.QrCode.QrCodeService;
+import com.pcop.qrcode_scanner.Role.RoleService;
 import com.pcop.qrcode_scanner.Storage.FileInfo;
 import com.pcop.qrcode_scanner.Storage.FileStorageService;
+import com.pcop.qrcode_scanner.User.UserMapper;
+import com.pcop.qrcode_scanner.User.UserPrincipal;
+import com.pcop.qrcode_scanner.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -43,6 +51,14 @@ public class EtudiantController {
 
     @Autowired
     FileStorageService fileStorageService;
+
+    @Autowired
+    JournalService journalService;
+
+    @Autowired
+    RoleService roleService;
+    @Autowired
+    private UserService userService;
 
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
@@ -108,7 +124,17 @@ public class EtudiantController {
 
 //        save the student to the DB
         etudiant.setQrCode(qrCode);
-        return etudiantService.save(etudiant);
+        etudiant = etudiantService.save(etudiant);
+
+//        log the operation to the database
+        String operation = String.format("Création de l'étudiant %s %s, cin: %s, IM: %s.", etudiant.getNom(),
+                etudiant.getPrenom(), etudiant.getCin(), etudiant.getMatricule());
+//        get the user who performed the action by his name
+        UserPrincipal principal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Journal journal = new Journal(operation, UserMapper.principalToUser(principal, userService), LocalDateTime.now());
+
+        journalService.save(journal);
+        return etudiant;
     }
 
 
@@ -122,6 +148,13 @@ public class EtudiantController {
 //        Verify if the etudiant is updated
         boolean isUpdated = GenericUpdater.updateIfChanged(etudiant, updatedEtudiant);
         if (isUpdated) {
+//            log the operation to the database
+            String operation = String.format("Mise à jour de l'étudiant %s %s, cin: %s, IM: %s.", etudiant.getNom(),
+                    etudiant.getPrenom(), etudiant.getCin(), etudiant.getMatricule());
+            UserPrincipal principal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            Journal journal = new Journal(operation, UserMapper.principalToUser(principal, userService), LocalDateTime.now());
+            journalService.save(journal);
+
             etudiantService.save(etudiant);
             return ResponseEntity.ok().body(etudiant);
         } else {
@@ -140,7 +173,15 @@ public class EtudiantController {
         etudiant.setProfilePicture(null);
         saveProfilePicture(image, etudiant);
 
-        etudiantService.save(etudiant);
+        etudiant = etudiantService.save(etudiant);
+
+//        log the operation to the database
+        String operation = String.format("Mise à jour de la photo de profil de l'étudiant %s %s, cin: %s, IM: %s.", etudiant.getNom(),
+                etudiant.getPrenom(), etudiant.getCin(), etudiant.getMatricule());
+        UserPrincipal principal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Journal journal = new Journal(operation, UserMapper.principalToUser(principal, userService), LocalDateTime.now());
+        journalService.save(journal);
+
         return ResponseEntity.ok().body(etudiant);
     }
 
@@ -171,6 +212,13 @@ public class EtudiantController {
         ProfilePicture etudiantPdp = etudiant.getProfilePicture();
         if (etudiantPdp!= null) fileStorageService.delete(etudiantPdp.getName());
 
+//        log the operation to the database
+        String operation = String.format("Suppression de l'étudiant %s %s, cin: %s, IM: %s.", etudiant.getNom(),
+                etudiant.getPrenom(), etudiant.getCin(), etudiant.getMatricule());
+        UserPrincipal principal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Journal journal = new Journal(operation, UserMapper.principalToUser(principal, userService), LocalDateTime.now());
+        journalService.save(journal);
+
         etudiantService.deleteById(id);
     }
 
@@ -185,7 +233,15 @@ public class EtudiantController {
             fileStorageService.delete(etudiantPdp.getName());
         }
         etudiant.setProfilePicture(null);
-        etudiantService.save(etudiant);
+        etudiant = etudiantService.save(etudiant);
+
+        // log the operation to the database
+        String operation = String.format("Suppression de la photo de profil de l'étudiant %s %s, cin: %s, IM: %s.", etudiant.getNom(),
+                etudiant.getPrenom(), etudiant.getCin(), etudiant.getMatricule());
+        UserPrincipal principal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Journal journal = new Journal(operation, UserMapper.principalToUser(principal, userService), LocalDateTime.now());
+        journalService.save(journal);
+
         return ResponseEntity.ok().body(etudiant);
     }
 
