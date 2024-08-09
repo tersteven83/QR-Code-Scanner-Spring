@@ -30,5 +30,13 @@ docker-compose -f compose.yml up --build
 docker-compose -f compose.yml up -d
 ```
 
+#### NB:
+If you want to use the app directly without the build process discussed earlier, simply 
+pull the docker image from my docker hub repository [here](https://hub.docker.com/r/steevi83/qrscanner) or type this command:
+
+```
+docker pull steevi83/qrscanner:tagname
+```
+
 ### Usage
 Access the API in Postman and start your apps. 😝
