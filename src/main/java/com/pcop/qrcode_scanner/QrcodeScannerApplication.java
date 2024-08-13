@@ -1,6 +1,8 @@
 package com.pcop.qrcode_scanner;
 
 import com.pcop.qrcode_scanner.Etudiant.Etudiant;
+import com.pcop.qrcode_scanner.Etudiant.EtudiantNiveau;
+import com.pcop.qrcode_scanner.Etudiant.EtudiantParcours;
 import com.pcop.qrcode_scanner.Etudiant.EtudiantRepository;
 import com.pcop.qrcode_scanner.Gender.Gender;
 import com.pcop.qrcode_scanner.QrCode.QrCode;
@@ -58,7 +60,8 @@ public class QrcodeScannerApplication {
 			// create a student for the initialization
 			Etudiant etudiant = new Etudiant("Steven", "Ter", LocalDate.now(),
 					"1234556", LocalDate.now(),
-					"tersteven@gmail.com", "0342796766", "Isada", "L3", "2023-2024", Gender.MALE, "2518");
+					"tersteven@gmail.com", "0342796766", "Isada", EtudiantParcours.ASR, "2023-2024", Gender.MALE, "2518",
+					EtudiantNiveau.L3);
 			etudiant.setQrCode(qrCode);
 
 			etudiantRepository.save(etudiant);

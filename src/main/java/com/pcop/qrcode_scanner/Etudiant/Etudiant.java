@@ -95,11 +95,16 @@ public class Etudiant {
     @Column(name = "adresse")
     private String adresse;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "parcours")
-    private String parcours;
+    private EtudiantParcours parcours;
 
     @Column(name = "annee_univ")
     private String anneeUniv;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "niveau")
+    private EtudiantNiveau niveau;
 
     @Column(
             name = "sexe",
@@ -119,7 +124,7 @@ public class Etudiant {
 
     public Etudiant(){}
 
-    public Etudiant(String nom, String prenom, LocalDate dob, String cin, LocalDate cin_date, String email, String tel, String adresse, String parcours, String anneeUniv, Gender sexe, String matricule) {
+    public Etudiant(String nom, String prenom, LocalDate dob, String cin, LocalDate cin_date, String email, String tel, String adresse, EtudiantParcours parcours, String anneeUniv, Gender sexe, String matricule, EtudiantNiveau niveau) {
         this.nom = nom;
         this.prenom = prenom;
         this.dob = dob;
@@ -132,6 +137,7 @@ public class Etudiant {
         this.anneeUniv = anneeUniv;
         this.sexe = sexe;
         this.matricule = matricule;
+        this.niveau = niveau;
     }
 
     @Override
@@ -229,11 +235,11 @@ public class Etudiant {
         this.adresse = adresse;
     }
 
-    public String getParcours() {
+    public EtudiantParcours getParcours() {
         return parcours;
     }
 
-    public void setParcours(String parcours) {
+    public void setParcours(EtudiantParcours parcours) {
         this.parcours = parcours;
     }
 
@@ -267,5 +273,13 @@ public class Etudiant {
 
     public void setProfilePicture(ProfilePicture profilePicture) {
         this.profilePicture = profilePicture;
+    }
+
+    public EtudiantNiveau getNiveau() {
+        return niveau;
+    }
+
+    public void setNiveau(EtudiantNiveau niveau) {
+        this.niveau = niveau;
     }
 }
